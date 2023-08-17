@@ -51,6 +51,7 @@ export async function Header() {
             </Button>
           )}
         </div>
+      </div>
     </header>
   )
 }
