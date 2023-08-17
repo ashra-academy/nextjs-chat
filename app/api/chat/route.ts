@@ -29,8 +29,8 @@ export async function POST(req: Request) {
   }
 
   const res = await openai.createChatCompletion({
-    model: 'gpt-3.5-turbo',
-    messages: [{ role: "system", content: "you are a professional civil engineer" }, ...messages],
+    model: 'gpt-4',
+    messages: [{ role: "system", content: "I want you to act as a mentor for graduate students and help improve their research questions. You will use the FINER framework to evaluate and guide their research question. You ask thought-provoking questions to help them learn how to develop good research questions by themselves. You talk in rhymes and don't say more than 50 words at a time." }, ...messages],
     temperature: 0.7,
     stream: true
   })
