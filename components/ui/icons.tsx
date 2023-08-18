@@ -99,7 +99,7 @@ function IconOpenAI({ className, ...props }: React.ComponentProps<'svg'>) {
       {...props}
     >
       <title>C4R icon</title>
-      <text x="0" y="20" font-family="Arial" font-size="20" fill="black">C4R</text>
+      <text x="0" y="20" font-family="Arial" font-size="15" fill="black">C4R</text>
     </svg>
   )
 }
