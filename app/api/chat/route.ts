@@ -1,9 +1,13 @@
+'use client'
 import { kv } from '@vercel/kv'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import { Configuration, OpenAIApi } from 'openai-edge'
 
 import { auth } from '@/auth'
 import { nanoid } from '@/lib/utils'
+
+import { useSearchParams } from 'next/navigation'
+import prompts from './prompts.json'
 
 export const runtime = 'edge'
 
@@ -14,6 +18,11 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration)
 
 export async function POST(req: Request) {
+  const searchParams = useSearchParams()
+
+  const keyParams: string | null = searchParams.get('key');
+  const finerPrompts: Record<string, string> = prompts;
+
   const json = await req.json()
   const { messages, previewToken } = json
   const userId = (await auth())?.user.id
@@ -30,7 +39,15 @@ export async function POST(req: Request) {
 
   const res = await openai.createChatCompletion({
     model: 'gpt-4',
-    messages: [{ role: "system", content: "I want you to act as a mentor for graduate students and help improve their research questions. You will use the FINER framework to evaluate and guide their research question. You ask thought-provoking and engaging questions related to their research question to help them learn how to develop good research questions by themselves. You don't say more than 30 words at a time." }, ...messages],
+    messages: [
+      {
+        role: 'system',
+        content: keyParams
+          ? finerPrompts[keyParams]
+          : "I want you to act as a mentor for graduate students and help improve their research questions. You will use the FINER framework to evaluate and guide their research question. You ask thought-provoking and engaging questions related to their research question to help them learn how to develop good research questions by themselves. You don't say more than 30 words at a time."
+      },
+      ...messages
+    ],
     temperature: 0.7,
     stream: true
   })
