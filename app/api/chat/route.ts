@@ -20,9 +20,15 @@ export async function POST(req: Request) {
   const finerPrompts: Record<string, string> = prompts;
   const referrer = req.headers.get('Referer'); // Get the referrer URL
 
-  const parsedReferrer = parse(referrer, true); // Parse the referrer URL
-  const keyParams = parsedReferrer.query.key; // Extract the "key" query parameter from referrer
+  let keyParams = ''; // Initialize referrerKey
 
+  if (referrer) {
+    const parsedReferrer = parse(referrer, true); // Parse the referrer URL
+    const { key } = parsedReferrer.query; // Destructure the key from parsedReferrer.query
+    if (typeof key === 'string') {
+      keyParams = key; // Assign the single string value to referrerKey
+    }
+  }
   const json = await req.json()
   const { messages, previewToken } = json
   const userId = (await auth())?.user.id
