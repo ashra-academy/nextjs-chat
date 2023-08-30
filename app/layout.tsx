@@ -8,7 +8,8 @@ import { cn } from '@/lib/utils'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 import { Providers } from '@/components/providers'
 import { Header } from '@/components/header'
-
+import { Suspense } from 'react'
+import { NavigationEvents } from './../components/navigation-events'
 export const metadata: Metadata = {
   title: {
     default: 'Next.js AI Chatbot',
@@ -50,6 +51,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
           </div>
           <TailwindIndicator />
         </Providers>
+        <Suspense fallback={null}>
+          <NavigationEvents />
+        </Suspense>
       </body>
     </html>
   )
