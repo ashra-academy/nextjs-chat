@@ -17,10 +17,11 @@ export const {
   CSRF_experimental // will be removed in future
 } = NextAuth({
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET
-    })
+    GitHub
+    // GoogleProvider({
+    //   clientId: process.env.GOOGLE_CLIENT_ID,
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET
+    // })
   ],
   callbacks: {
     jwt({ token, profile }) {
