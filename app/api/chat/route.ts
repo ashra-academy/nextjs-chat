@@ -1,4 +1,4 @@
-
+'use client'
 import { kv } from '@vercel/kv'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import { Configuration, OpenAIApi } from 'openai-edge'
@@ -29,6 +29,7 @@ export async function POST(req: Request) {
       keyParams = key; // Assign the single string value to referrerKey
     }
   }
+  console.log(keyParams? finerPrompts[`${keyParams}`]: 'not passed')
   const json = await req.json()
   const { messages, previewToken } = json
   const userId = (await auth())?.user.id
