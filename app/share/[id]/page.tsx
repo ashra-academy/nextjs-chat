@@ -21,16 +21,17 @@ export async function generateMetadata({
   const chat = await getSharedChat(params.id)
 
   return {
-    title: chat?.title.slice(0, 50) ?? 'Chat'
+    // title: chat?.title.slice(0, 50) ?? 'Chat'
+    title: 'Chat'
   }
 }
 
 export default async function SharePage({ params }: SharePageProps) {
   const chat = await getSharedChat(params.id)
 
-  if (!chat || !chat?.sharePath) {
-    notFound()
-  }
+  // if (!chat || !chat?.sharePath) {
+  //   notFound()
+  // }
 
   return (
     <>
@@ -45,9 +46,9 @@ export default async function SharePage({ params }: SharePageProps) {
             </div>
           </div>
         </div>
-        <ChatList messages={chat.messages} />
+        {/* <ChatList messages={chat.messages} /> */}
       </div>
-      <FooterText className="py-8" />
+      {/* <FooterText className="py-8" /> */}
     </>
   )
 }

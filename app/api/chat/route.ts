@@ -2,7 +2,7 @@ import { kv } from '@vercel/kv'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import { Configuration, OpenAIApi } from 'openai-edge'
 
-import { auth } from '@/auth'
+// import { auth } from '@/auth'
 import { nanoid } from '@/lib/utils'
 import prompts from './prompts.json'
 import { parse } from 'url'
@@ -28,20 +28,9 @@ export async function POST(req: Request) {
       keyParams = key; // Assign the single string value to referrerKey
     }
   }
+  console.log('keyparams',keyParams? finerPrompts[`${keyParams}`]: 'not passed')
   const json = await req.json()
-  const { messages, previewToken } = json
-  const userId = (await auth())?.user.id
-
-  if (!userId) {
-    return new Response('Unauthorized', {
-      status: 401
-    })
-  }
-
-  if (previewToken) {
-    configuration.apiKey = previewToken
-  }
-
+  const { messages } = json
   const res = await openai.createChatCompletion({
     model: 'gpt-3.5-turbo',
     messages: [
@@ -54,8 +43,9 @@ export async function POST(req: Request) {
       ...messages
     ],
     temperature: 0.7,
-    stream: true
+    stream: true,
   })
+  console.log('response ',res)
 
   const stream = OpenAIStream(res, {
     async onCompletion(completion) {
@@ -66,7 +56,7 @@ export async function POST(req: Request) {
       const payload = {
         id,
         title,
-        userId,
+        userId: '123',
         createdAt,
         path,
         messages: [
@@ -77,11 +67,11 @@ export async function POST(req: Request) {
           }
         ]
       }
-      await kv.hmset(`chat:${id}`, payload)
-      await kv.zadd(`user:chat:${userId}`, {
-        score: createdAt,
-        member: `chat:${id}`
-      })
+      // await kv.hmset(`chat:${id}`, payload)
+      // await kv.zadd(`user:chat:${payload.userId}`, {
+      //   score: createdAt,
+      //   member: `chat:${id}`
+      // })
     }
   })
 
