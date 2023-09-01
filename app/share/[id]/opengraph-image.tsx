@@ -30,9 +30,9 @@ interface ImageProps {
 export default async function Image({ params }: ImageProps) {
   const chat = await getSharedChat(params.id)
 
-  if (!chat || !chat?.sharePath) {
-    return null
-  }
+  // if (!chat || !chat?.sharePath) {
+  //   return null
+  // }
 
   const textAlign = chat?.title?.length > 40 ? 'items-start' : 'items-center'
 
