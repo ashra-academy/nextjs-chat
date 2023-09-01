@@ -29,7 +29,7 @@ interface ImageProps {
 
 export default async function Image({ params }: ImageProps) {
   const chat = await getSharedChat(params.id)
-
+// temporary commented
   // if (!chat || !chat?.sharePath) {
   //   return null
   // }
