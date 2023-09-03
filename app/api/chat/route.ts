@@ -1,7 +1,7 @@
 import { kv } from '@vercel/kv'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import { Configuration, OpenAIApi } from 'openai-edge'
-
+import { connectMongoDB } from '@/lib/configuration/mongoodb'
 // import { auth } from '@/auth'
 import { nanoid } from '@/lib/utils'
 import prompts from './prompts.json'
@@ -16,6 +16,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration)
 
 export async function POST(req: Request) {
+  await connectMongoDB()
   const finerPrompts: Record<string, string> = prompts;
   const referrer = req.headers.get('Referer'); // Get the referrer URL
 
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
       keyParams = key; // Assign the single string value to referrerKey
     }
   }
-  console.log('keyparams',keyParams? finerPrompts[`${keyParams}`]: 'not passed')
+  // console.log('keyparams',keyParams? finerPrompts[`${keyParams}`]: 'not passed')
   const json = await req.json()
   const { messages } = json
   const res = await openai.createChatCompletion({
@@ -45,7 +46,7 @@ export async function POST(req: Request) {
     temperature: 0.7,
     stream: true,
   })
-  console.log('response ',res)
+  // console.log('response ',res)
 
   const stream = OpenAIStream(res, {
     async onCompletion(completion) {

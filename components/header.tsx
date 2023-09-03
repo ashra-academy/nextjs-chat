@@ -17,6 +17,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { ClearHistory } from '@/components/clear-history'
 import { UserMenu } from '@/components/user-menu'
 import { LoginButton } from '@/components/login-button'
+import UserInfo from './user-info'
 
 export async function Header() {
   const session: any = {
@@ -45,6 +46,7 @@ export async function Header() {
           </Link>
         )}
         <div className="flex items-center">
+          <UserInfo/>
           <IconSeparator className="w-6 h-6 text-muted-foreground/50" />
           {session?.user ? (
             <UserMenu user={session.user} />
