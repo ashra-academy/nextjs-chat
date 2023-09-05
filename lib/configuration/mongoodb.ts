@@ -14,3 +14,10 @@ export const connectMongoDB = async () => {
     console.log('Failed to connect database with error-> : ', err)
   }
 }
+export const closeMongoDB = async () => {
+  try {
+    mongoose.connection.close();
+  } catch (err) {
+    console.log('Failed to close database connection with error-> : ', err)
+  }
+}

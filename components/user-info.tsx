@@ -5,7 +5,7 @@ import { LogedInUserContext } from './contextapis/auth-context'
 const UserInfo = () => {
     const {logedInUser, setLogInUser} = useContext<any>(LogedInUserContext)
   return (
-    <div>UserInfo {logedInUser?logedInUser:'login'}</div>
+    <div>UserInfo {logedInUser?logedInUser._id:'login'}</div>
   )
 }
 

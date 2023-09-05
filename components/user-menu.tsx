@@ -1,9 +1,6 @@
 'use client'
 
 import Image from 'next/image'
-import { type Session } from 'next-auth'
-import { signOut } from 'next-auth/react'
-
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -13,9 +10,11 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { IconExternalLink } from '@/components/ui/icons'
+import { LogedInUserContext } from './contextapis/auth-context'
+import { useContext } from 'react'
 
-export interface UserMenuProps {
-  user: Session['user']
+interface Props {
+  user: any
 }
 
 function getUserInitials(name: string) {
@@ -23,32 +22,26 @@ function getUserInitials(name: string) {
   return lastName ? `${firstName[0]}${lastName[0]}` : firstName.slice(0, 2)
 }
 
-export function UserMenu({ user }: UserMenuProps) {
-
+export function UserMenu({ user }:Props) {
+  
+    const {setLogInUser} = useContext<any>(LogedInUserContext)
+  const logOut =():void=>{
+    localStorage.removeItem('botsession')
+    setLogInUser(null)
+  }
   return (
     <div className="flex items-center justify-between">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="pl-0">
-            {user?.image ? (
-              <Image
-                className="w-6 h-6 transition-opacity duration-300 rounded-full select-none ring-1 ring-zinc-100/10 hover:opacity-80"
-                src={user?.image ? `${user.image}` : ''}
-                alt={user.name ?? 'Avatar'}
-                width={100}
-                height={100}
-              />
-            ) : (
-              <div className="flex items-center justify-center text-xs font-medium uppercase rounded-full select-none h-7 w-7 shrink-0 bg-muted/50 text-muted-foreground">
-                {user?.name ? getUserInitials(user?.name) : null}
+          <div className="flex items-center justify-center text-xs font-medium uppercase rounded-full select-none h-7 w-7 shrink-0 bg-muted/50 text-muted-foreground">
+                {user?.email ? getUserInitials(user?.email) : null}
               </div>
-            )}
-            <span className="ml-2">{user?.name}</span>
+            <span className="ml-2">{user?.email}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent sideOffset={8} align="start" className="w-[180px]">
           <DropdownMenuItem className="flex-col items-start">
-            <div className="text-xs font-medium">{user?.name}</div>
             <div className="text-xs text-zinc-500">{user?.email}</div>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -64,11 +57,7 @@ export function UserMenu({ user }: UserMenuProps) {
             </a>
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() =>
-              signOut({
-                callbackUrl: '/'
-              })
-            }
+            onClick={() =>{logOut()}}
             className="text-xs"
           >
             Log Out

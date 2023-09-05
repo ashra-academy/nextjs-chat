@@ -11,14 +11,19 @@ const userSchema = new mongoose.Schema({
         required: true,
         default: "000000",
     },
+    otpCreationTime: {
+        type: Date,
+        required: true,
+        default: new Date(),
+    },
     otpExpirationTime: {
         type: Date,
         required: true,
-        default: Date.now(),
+        default: new Date(),
     }
 }, {
     timestamps: true
 })
 
-const User = mongoose.model("User", userSchema)
+const User =  mongoose.models.User || mongoose.model("User", userSchema)
 export default User

@@ -5,8 +5,8 @@ import {
   generateOTP,
   isOtpValid,
   createOtpExpirationTime,
-  chechResendOtpIfBelow2minutes,
-  chechResendOtpIfUp2minutes
+  chechResendOtpIfBelow10minutes,
+  chechResendOtpIfUp10minutes
 } from '@/lib/utils/otpController'
 
 export async function POST(request: Request) {
@@ -48,13 +48,13 @@ export async function POST(request: Request) {
     let user = await User.findOne({ email: email })
     let otp = generateOTP()
     if (user) {
-      if (chechResendOtpIfBelow2minutes(String(user.otpExpirationTime))) {
+      if (chechResendOtpIfBelow10minutes(String(user.otpExpirationTime))) {
         return NextResponse.json(
           { message: 'Otp already sent.',  otpStatus: 'already sent'},
           { status: 409 }
         )
       }
-      if (chechResendOtpIfUp2minutes(String(user.otpExpirationTime))) {
+      if (chechResendOtpIfUp10minutes(String(user.otpExpirationTime))) {
         return NextResponse.json(
           { message: 'Otp already sent.', otpStatus: 'resend'},
           { status: 409 }

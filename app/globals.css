@@ -76,3 +76,6 @@
     @apply bg-background text-foreground;
   }
 }
+.screen-h-without-header{
+  height: calc(100vh - 264px);
+}
