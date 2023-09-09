@@ -1,13 +1,16 @@
-import { kv } from '@vercel/kv'
+// import { kv } from '@vercel/kv'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import { Configuration, OpenAIApi } from 'openai-edge'
-
+import { connectMongoDB } from '@/lib/configuration/mongoodb'
 // import { auth } from '@/auth'
 import { nanoid } from '@/lib/utils'
 import prompts from './prompts.json'
 import { parse } from 'url'
+import Chats from '@/lib/models/chatModel'
+import { exists } from 'fs'
+import UserChat from '@/lib/models/userChatModel'
 
-export const runtime = 'edge'
+// export const runtime = 'edge'
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY
@@ -16,19 +19,20 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration)
 
 export async function POST(req: Request) {
-  const finerPrompts: Record<string, string> = prompts;
-  const referrer = req.headers.get('Referer'); // Get the referrer URL
+  await connectMongoDB()
+  const finerPrompts: Record<string, string> = prompts
+  const referrer = req.headers.get('Referer') // Get the referrer URL
 
-  let keyParams = ''; // Initialize referrerKey
+  let keyParams = '' // Initialize referrerKey
 
   if (referrer) {
-    const parsedReferrer = parse(referrer, true); // Parse the referrer URL
-    const { key } = parsedReferrer.query; // Destructure the key from parsedReferrer.query
+    const parsedReferrer = parse(referrer, true) // Parse the referrer URL
+    const { key } = parsedReferrer.query // Destructure the key from parsedReferrer.query
     if (typeof key === 'string') {
-      keyParams = key; // Assign the single string value to referrerKey
+      keyParams = key // Assign the single string value to referrerKey
     }
   }
-  console.log('keyparams',keyParams? finerPrompts[`${keyParams}`]: 'not passed')
+  // console.log('keyparams',keyParams? finerPrompts[`${keyParams}`]: 'not passed')
   const json = await req.json()
   const { messages } = json
   const res = await openai.createChatCompletion({
@@ -43,9 +47,9 @@ export async function POST(req: Request) {
       ...messages
     ],
     temperature: 0.7,
-    stream: true,
+    stream: true
   })
-  console.log('response ',res)
+  // console.log('response ',res)
 
   const stream = OpenAIStream(res, {
     async onCompletion(completion) {
@@ -56,9 +60,10 @@ export async function POST(req: Request) {
       const payload = {
         id,
         title,
-        userId: '123',
+        userId: json?.userId,
         createdAt,
-        path,
+        path: path, 
+        sharePath: `/share/${id}`,
         messages: [
           ...messages,
           {
@@ -67,11 +72,46 @@ export async function POST(req: Request) {
           }
         ]
       }
-      // await kv.hmset(`chat:${id}`, payload)
-      // await kv.zadd(`user:chat:${payload.userId}`, {
-      //   score: createdAt,
-      //   member: `chat:${id}`
-      // })
+      // console.log('payload',payload)
+      // find duplicate message for same user
+      if (payload.messages.length == 4) {
+        const existChatWithSameTitleAndMessage = await Chats.find({
+          title: title,
+          userId: json?.userId
+        })
+        //  delete duplicate message for same user
+        for (const chat of existChatWithSameTitleAndMessage) {
+          if (chat.messages.length < 4) {
+            await Chats.deleteOne({ _id: chat._id })
+          }
+        }
+      }
+
+      const existChat = await Chats.findOne({ id: id }).exec()
+      if (existChat) {
+        existChat.messages = payload.messages
+        existChat.path = payload.path
+        existChat.sharePath = payload.sharePath
+        existChat.save()
+        // console.log('exist ',existChat)
+      } else {
+        await Chats.create({
+          ...payload
+        })
+      }
+
+      const userchatExist = await UserChat.findOne({ userChatId: payload.userId})
+      if(userchatExist) {
+        userchatExist.score = createdAt
+        userchatExist.member = id
+        await userchatExist.save()
+      }else{
+        await UserChat.create({
+          userChatId: payload.userId,
+          score: createdAt,
+          member: id
+        })
+      }
     }
   })
 

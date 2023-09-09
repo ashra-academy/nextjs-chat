@@ -1,28 +1,24 @@
-'use server'
-
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { kv } from '@vercel/kv'
-
+import Chats from '@/lib/models/chatModel'
+import { ChatList } from '@/components/chat-list'
 import { type Chat } from '@/lib/types'
+import { connectMongoDB } from '@/lib/configuration/mongoodb'
 
 export async function getChats(userId?: string | null) {
-  // if (!userId) {
-  //   return []
-  // }
-  // try {
-  //   const pipeline = kv.pipeline()
-  //   const chats: string[] = await kv.zrange(`user:chat:${userId}`, 0, -1, {
-  //     rev: true
-  //   })
-  //   for (const chat of chats) {
-  //     pipeline.hgetall(chat)
-  //   }
-  //   const results = await pipeline.exec()
-  //   return results as Chat[]
-  // } catch (error) {
-  //   return []
-  // }
+  if (!userId) {
+    return []
+  }
+  // console.log('get chat userid ', userId)
+  // await connectMongoDB()
+  try {
+    // const results = await Chats.find({userId: userId})
+    // return results as Chat[]
+    // return results
+  } catch (error) {
+    return []
+  }
+  return []
 }
 
 export async function getChat(id: string, userId: string) {
@@ -55,7 +51,7 @@ export async function removeChat({ id, path }: { id: string; path: string }) {
 
   // revalidatePath('/')
   // return revalidatePath(path)
-  return null
+  return revalidatePath('/')
 }
 
 export async function clearChats() {
@@ -77,22 +73,23 @@ export async function clearChats() {
   // await pipeline.exec()
   // revalidatePath('/')
   // return redirect('/')
+  return redirect('/')
 }
 
 export async function getSharedChat(id: string) {
-  // const chat = await kv.hgetall<Chat>(`chat:${id}`)
-
+  // const response: any = await fetch(`/api/chats?sharepath=${id}`, {
+  //   method: 'GET'
+  // })
+  // const data = await response.json()
+  // const chat = data.chat
   // if (!chat || !chat.sharePath) {
   //   return null
   // }
 
-  return {
-    title: 'chat',
-    createdAt: new Date(),
-    messages: [
-      { id: '123', createdAt: new Date(), content: 'string', role: 'system' }
-    ]
-  }
+  return null
+  //  {
+  //   ...chat
+  // }
 }
 
 export async function shareChat(chat: Chat) {
@@ -102,10 +99,11 @@ export async function shareChat(chat: Chat) {
   //     error: 'Unauthorized'
   //   }
   // }
-  // const payload = {
-  //   ...chat,
-  //   sharePath: `/share/${chat.id}`
-  // }
-  // await kv.hmset(`chat:${chat.id}`, payload)
-  // return payload
+  // await connectMongoDB()
+  const payload = {
+    ...chat,
+    sharePath: `/share/${chat.id}`
+  }
+  // await Chats.create({...payload})
+  return payload
 }
