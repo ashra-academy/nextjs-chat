@@ -25,7 +25,7 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json(
-    { message: 'Invalid otp. Try again later.', otpStatus: 'invalid' },
+    { message: 'Invalid otp, Check your email for otp.', otpStatus: 'invalid' },
     { status: 400 }
   )
 }

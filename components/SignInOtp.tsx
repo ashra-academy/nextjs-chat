@@ -3,6 +3,7 @@ import {
   LogedInEmailContext,
   LogedInUserContext
 } from './contextapis/auth-context'
+import { toast } from 'react-hot-toast'
 
 const SigninOtp = () => {
   const [otp, setOtp] = useState('')
@@ -11,7 +12,8 @@ const SigninOtp = () => {
   const [filledOTP, setFilledOTP] = useState(true)
   const [invalidOTP, setInvalidOTP] = useState(true)
   const manageOtpSubmit = async () => {
-    setInvalidOTP(false)
+    setInvalidOTP(true)
+    setFilledOTP(true)
     if (otp === '' || otp.length < 6 || otp.length > 6) {
       setFilledOTP(false)
     } else {
@@ -25,13 +27,19 @@ const SigninOtp = () => {
           body: JSON.stringify({ email: logedInEmail, otp: otp })
         })
         const content = await rawResponse.json()
-        if(content.otpStatus === 'verified'){
-          setLogInUser({...content?.session})
+        if (content.otpStatus === 'verified') {
+          setLogInUser({ ...content?.session })
           localStorage.setItem('botsession', JSON.stringify(content?.session))
+          toast.success(`${content.message}`)
         }
+        if (content.otpStatus === 'invalid') {
+          setInvalidOTP(false)
+          toast.error(`${content.message}`)
+        }
+        console.log('content: ', content)
       } catch (error) {
-        setFilledOTP(true)
-        console.log('error: ',error)
+        console.log('error: ', error)
+        toast.error(`${error}`)
       }
     }
   }
@@ -49,7 +57,9 @@ const SigninOtp = () => {
             </span>
           </div>
         </div>
-      ):''}
+      ) : (
+        ''
+      )}
       {!invalidOTP ? (
         <div
           id="toast-interactive"
@@ -62,7 +72,9 @@ const SigninOtp = () => {
             </span>
           </div>
         </div>
-      ):''}
+      ) : (
+        ''
+      )}
       <div className="w-[300px]">
         <div className="mb-6">
           <label
