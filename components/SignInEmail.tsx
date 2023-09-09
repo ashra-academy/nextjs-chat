@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { LogedInEmailContext } from './contextapis/auth-context'
+import { toast } from 'react-hot-toast'
 const SignInEmail = ({ manageEmailSubmit }: any) => {  
   // login email state
   const { setLogInEmail } = useContext<any>(LogedInEmailContext)
@@ -31,10 +32,12 @@ const SignInEmail = ({ manageEmailSubmit }: any) => {
         })
         content = await rawResponse.json()
         // console.log('content: ',content)
+        toast.success('Otp sent successfully')
         manageEmailSubmit()
         return
       } catch (error) {
         console.log("error: ",error)
+        toast.error(content?.message)
         return
       }
     }

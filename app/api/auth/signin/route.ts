@@ -30,17 +30,23 @@ export async function POST(req: Request) {
     user.otpCreationTime = new Date()
     user.otpExpirationTime = createOtpExpirationTime()
     await user.save()
-
-    transporter.sendMail({
-      from: process.env.EMAIL_ADDRESS, // sender address
-      to: json.email, // list of receivers
-      subject: 'Your login otp ✔', // Subject line
-      html: formatedOtpEmail(user.otp) // html body
-    })
-    return NextResponse.json(
-      { message: 'Otp resend successfully' },
-      { status: 200 }
-    )
+    try {
+      await transporter.sendMail({
+        from: 'arash@ashra.academy', // sender address
+        to: json?.email, // list of receivers
+        subject: 'Your login otp ✔', // Subject line
+        html: formatedOtpEmail(user.otp) // html body
+      })
+      return NextResponse.json(
+        { message: 'Otp resend successfully' },
+        { status: 200 }
+      )
+    } catch (error) {
+      return NextResponse.json(
+        { message: 'Error sending email.', error },
+        { status: 200 }
+      )
+    }
   }
 
   await User.create({
@@ -50,7 +56,7 @@ export async function POST(req: Request) {
     otpExpirationTime: createOtpExpirationTime()
   })
   transporter.sendMail({
-    from: process.env.EMAIL_ADDRESS, // sender address
+    from: 'arash@ashra.academy', // sender address
     to: json.email, // list of receivers
     subject: 'Your login otp ✔', // Subject line
     html: formatedOtpEmail(otp) // html body
