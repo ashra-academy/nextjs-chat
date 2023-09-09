@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     user.otpExpirationTime = createOtpExpirationTime()
     await user.save()
     try {
-      transporter.sendMail({
+      await transporter.sendMail({
         from: 'arash@ashra.academy', // sender address
         to: json?.email, // list of receivers
         subject: 'Your login otp ✔', // Subject line
