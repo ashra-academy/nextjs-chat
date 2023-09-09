@@ -3,7 +3,7 @@ import SignInEmail from '@/components/SignInEmail'
 import SignInOtp from '@/components/SignInOtp'
 import { useState } from 'react'
 
-const page = () => {
+const SignInUi = () => {
   const [emailSubmit, setEmailSubmit] = useState(false)
   const manageEmailSubmit = ():void => {
     setEmailSubmit(true)
@@ -19,4 +19,4 @@ const page = () => {
   )
 }
 
-export default page
+export default SignInUi

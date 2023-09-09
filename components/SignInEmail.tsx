@@ -30,11 +30,11 @@ const SignInEmail = ({ manageEmailSubmit }: any) => {
           body: JSON.stringify({ email: email })
         })
         content = await rawResponse.json()
-        console.log(content)
+        // console.log('content: ',content)
         manageEmailSubmit()
         return
       } catch (error) {
-        console.log(error)
+        console.log("error: ",error)
         return
       }
     }

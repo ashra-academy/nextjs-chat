@@ -41,13 +41,13 @@ import {
 
 interface SidebarActionsProps {
   chat: Chat
-  removeChat: (args: { id: string; path: string }) => ServerActionResult<void>
+  fetchChats: Function
   shareChat: (chat: Chat) => ServerActionResult<Chat>
 }
 
 export function SidebarActions({
   chat,
-  removeChat,
+  fetchChats,
   shareChat
 }: SidebarActionsProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
@@ -56,12 +56,37 @@ export function SidebarActions({
   const [isSharePending, startShareTransition] = React.useTransition()
   const router = useRouter()
 
+  const handleRemove = async ({id,path}: any) => {
+    let userauthinfo = localStorage.getItem('botsession')
+
+    let loginuserid: any
+    if (userauthinfo && userauthinfo !== 'undefined') {
+      loginuserid = JSON.parse(userauthinfo)
+    }
+    try {
+      const response: any = await fetch(
+        `/api/chats?userid=${loginuserid?._id}&&chatid=${id}`,
+        {
+          method: 'DELETE'
+        }
+      )
+      const data = await response.json()
+      fetchChats()
+      setDeleteDialogOpen(false)
+      router.refresh()
+      router.push('/')
+      toast.success('Chat deleted')
+    } catch (error) {
+      toast.error(`${error}`)
+    }
+  }
+
   const copyShareLink = React.useCallback(async (chat: Chat) => {
     if (!chat.sharePath) {
       return toast.error('Could not copy share link to clipboard')
     }
 
-    const url = new URL(window.location.href)
+    const url = new URL(window.location?.href)
     url.pathname = chat.sharePath
     navigator.clipboard.writeText(url.toString())
     setShareDialogOpen(false)
@@ -125,9 +150,9 @@ export function SidebarActions({
             </div>
           </div>
           <DialogFooter className="items-center">
-            {chat.sharePath && (
+            {chat?.sharePath && (
               <Link
-                href={chat.sharePath}
+                href={chat?.sharePath}
                 className={cn(
                   badgeVariants({ variant: 'secondary' }),
                   'mr-auto'
@@ -135,27 +160,18 @@ export function SidebarActions({
                 target="_blank"
               >
                 <IconUsers className="mr-2" />
-                {chat.sharePath}
+                {chat?.sharePath}
               </Link>
             )}
             <Button
               disabled={isSharePending}
               onClick={() => {
                 startShareTransition(async () => {
-                  if (chat.sharePath) {
+                  if (chat?.sharePath) {
                     await new Promise(resolve => setTimeout(resolve, 500))
                     copyShareLink(chat)
                     return
                   }
-
-                  const result = await shareChat(chat)
-
-                  if (result && 'error' in result) {
-                    toast.error(result.error)
-                    return
-                  }
-
-                  copyShareLink(result)
                 })
               }}
             >
@@ -189,20 +205,11 @@ export function SidebarActions({
               onClick={event => {
                 event.preventDefault()
                 startRemoveTransition(async () => {
-                  const result = await removeChat({
+                  const result = await handleRemove({
                     id: chat.id,
                     path: chat.path
                   })
 
-                  if (result && 'error' in result) {
-                    toast.error(result.error)
-                    return
-                  }
-
-                  setDeleteDialogOpen(false)
-                  router.refresh()
-                  router.push('/')
-                  toast.success('Chat deleted')
                 })
               }}
             >

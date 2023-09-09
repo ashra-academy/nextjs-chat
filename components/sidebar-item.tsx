@@ -42,7 +42,7 @@ export function SidebarItem({ chat, children }: SidebarItemProps) {
         )}
       </div>
       <Link
-        href={chat.path}
+        href={chat?.path}
         className={cn(
           buttonVariants({ variant: 'ghost' }),
           'group w-full pl-8 pr-16',

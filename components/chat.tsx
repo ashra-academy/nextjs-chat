@@ -16,10 +16,12 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { toast } from 'react-hot-toast'
+import { LogedInUserContext } from './contextapis/auth-context'
+
 
 const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
 export interface ChatProps extends React.ComponentProps<'div'> {
@@ -28,6 +30,7 @@ export interface ChatProps extends React.ComponentProps<'div'> {
 }
 
 export function Chat({ id, initialMessages, className }: ChatProps) {
+  const {logedInUser} = useContext<any>(LogedInUserContext)
   const [previewToken, setPreviewToken] = useLocalStorage<string | null>(
     'ai-token',
     "123"
@@ -40,7 +43,8 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
       id,
       body: {
         id,
-        previewToken
+        previewToken,
+        userId: logedInUser?._id
       },
       onResponse(response) {
         if (response.status === 401) {

@@ -5,7 +5,7 @@ import SignInUi from '@/components/signin/SignInUi'
 import { useEffect, useState, useContext } from 'react'
 import { LogedInUserContext } from '@/components/contextapis/auth-context'
 
-export const runtime = 'edge'
+// export const runtime = 'edge'
 
 export default function IndexPage() {
   const id = nanoid()

@@ -4,7 +4,7 @@ import {
   LogedInUserContext
 } from './contextapis/auth-context'
 
-const signinOtp = () => {
+const SigninOtp = () => {
   const [otp, setOtp] = useState('')
   const { logedInEmail } = useContext<any>(LogedInEmailContext)
   const { setLogInUser } = useContext<any>(LogedInUserContext)
@@ -15,7 +15,6 @@ const signinOtp = () => {
     if (otp === '' || otp.length < 6 || otp.length > 6) {
       setFilledOTP(false)
     } else {
-      setFilledOTP(true)
       try {
         const rawResponse = await fetch('api/auth/verifyotp', {
           method: 'POST',
@@ -32,7 +31,7 @@ const signinOtp = () => {
         }
       } catch (error) {
         setFilledOTP(true)
-        console.log(error)
+        console.log('error: ',error)
       }
     }
   }
@@ -93,4 +92,4 @@ const signinOtp = () => {
   )
 }
 
-export default signinOtp
+export default SigninOtp

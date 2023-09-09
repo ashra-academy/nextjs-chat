@@ -1,10 +1,8 @@
 import mongoose from 'mongoose'
 
 export const connectMongoDB = async () => {
+  console.log(process.env.MONGODB_URI)
   try {
-    if (mongoose.connection.readyState === 1){
-      return mongoose.connection.asPromise()
-    }
     if(process.env.MONGODB_URI){
       await mongoose
         .connect(process.env.MONGODB_URI)

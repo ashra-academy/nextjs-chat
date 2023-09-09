@@ -27,11 +27,11 @@ export async function generateMetadata({
 }
 
 export default async function SharePage({ params }: SharePageProps) {
-  const chat = await getSharedChat(params.id)
+  const response: any = await fetch(`${process.env.ROOT_URL}/api/chats?sharepath=${params.id}`, {
+    method: 'GET'
+  })
+  const data = await response.json()
 
-  // if (!chat || !chat?.sharePath) {
-  //   notFound()
-  // }
 
   return (
     <>
@@ -39,14 +39,14 @@ export default async function SharePage({ params }: SharePageProps) {
         <div className="px-4 py-6 border-b bg-background md:px-6 md:py-8">
           <div className="max-w-2xl mx-auto md:px-6">
             <div className="space-y-1 md:-mx-8">
-              <h1 className="text-2xl font-bold">{chat.title}</h1>
+              <h1 className="text-2xl font-bold">{data?.chat?.title}</h1>
               <div className="text-sm text-muted-foreground">
-                {formatDate(chat.createdAt)} · {chat.messages.length} messages
+                {formatDate(data?.chat?.createdAt)} · {data?.chat?.messages.length} messages
               </div>
             </div>
           </div>
         </div>
-        {/* <ChatList messages={chat.messages} /> */}
+        <ChatList messages={data?.chat.messages} />
       </div>
       {/* <FooterText className="py-8" /> */}
     </>

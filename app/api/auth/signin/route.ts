@@ -25,16 +25,18 @@ export async function POST(req: Request) {
         { status: 200 }
       )
     }
+
+    user.otp = otp
+    user.otpCreationTime = new Date()
+    user.otpExpirationTime = createOtpExpirationTime()
+    await user.save()
+
     transporter.sendMail({
       from: process.env.EMAIL_ADDRESS, // sender address
       to: json.email, // list of receivers
       subject: 'Your login otp ✔', // Subject line
       html: formatedOtpEmail(user.otp) // html body
     })
-    user.otp = otp
-    user.otpCreationTime = new Date()
-    user.otpExpirationTime = createOtpExpirationTime()
-    await user.save()
     return NextResponse.json(
       { message: 'Otp resend successfully' },
       { status: 200 }

@@ -28,13 +28,12 @@ interface ImageProps {
 }
 
 export default async function Image({ params }: ImageProps) {
-  const chat = await getSharedChat(params.id)
-// temporary commented
-  // if (!chat || !chat?.sharePath) {
-  //   return null
-  // }
+  const response: any = await fetch(`${process.env.ROOT_URL}/api/chats?sharepath=${params.id}`, {
+    method: 'GET'
+  })
+  const data = await response.json()
 
-  const textAlign = chat?.title?.length > 40 ? 'items-start' : 'items-center'
+  const textAlign = data?.chat?.title?.length > 40 ? 'items-start' : 'items-center'
 
   return new ImageResponse(
     (
@@ -53,9 +52,9 @@ export default async function Image({ params }: ImageProps) {
               </svg>
             </div>
             <div tw="flex text-white font-bold text-4xl leading-normal ml-10">
-              {chat.title.length > 120
-                ? `${chat.title.slice(0, 120)}...`
-                : chat.title}
+              {data?.chat.title.length > 120
+                ? `${data?.chat.title.slice(0, 120)}...`
+                : data?.chat.title}
             </div>
           </div>
           <div tw="flex w-full mt-14 items-start">
