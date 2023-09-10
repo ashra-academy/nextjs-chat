@@ -20,6 +20,9 @@ const chatsSchema = new Schema({
             },
             content: {
                 type: String
+            },
+            createdTime: {
+                type: String
             }
         }
     ],
