@@ -22,7 +22,7 @@ const chatsSchema = new Schema({
                 type: String
             },
             createdTime: {
-                type: String
+                type: Number
             }
         }
     ],
