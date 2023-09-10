@@ -36,7 +36,7 @@ export async function GET(req: Request) {
 
   if(chatId == 'undefined' || chatId == 'null'){
     
-    const userchatExist = await Chats.find({ userId: userId }).sort({ createdAt: -1})
+    const userchatExist = await Chats.find({ userId: userId }).sort({ updatedAt: -1})
   
     return NextResponse.json({ chats: userchatExist || [] }, { status: 200 })
   

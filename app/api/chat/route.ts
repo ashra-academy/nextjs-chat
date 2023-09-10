@@ -35,6 +35,7 @@ export async function POST(req: Request) {
   // console.log('keyparams',keyParams? finerPrompts[`${keyParams}`]: 'not passed')
   const json = await req.json()
   const { messages } = json
+  let reqestedTime = Date.now()
   const res = await openai.createChatCompletion({
     model: 'gpt-3.5-turbo',
     messages: [
@@ -68,11 +69,13 @@ export async function POST(req: Request) {
           ...messages,
           {
             content: completion,
-            role: 'assistant'
+            role: 'assistant',
+            createdTime: createdAt
           }
         ]
       }
-      // console.log('payload',payload)
+      let messagelength = payload.messages.length
+      // console.log('payload',{...payload.messages[messagelength - 2]}, payload.messages[messagelength - 1]);
       // find duplicate message for same user
       if (payload.messages.length == 4) {
         const existChatWithSameTitleAndMessage = await Chats.find({
@@ -89,14 +92,17 @@ export async function POST(req: Request) {
 
       const existChat = await Chats.findOne({ id: id }).exec()
       if (existChat) {
-        existChat.messages = payload.messages
+        existChat.messages = [...existChat.messages, {...payload.messages[messagelength - 2], createdTime:reqestedTime}, payload.messages[messagelength - 1]]
         existChat.path = payload.path
         existChat.sharePath = payload.sharePath
         existChat.save()
         // console.log('exist ',existChat)
       } else {
+        let messagelength = payload.messages.length
+        let newpayload = payload
+        newpayload.messages = [{...newpayload.messages[messagelength - 2], createdTime:reqestedTime}, newpayload.messages[messagelength - 1]]
         await Chats.create({
-          ...payload
+          ...newpayload
         })
       }
 
