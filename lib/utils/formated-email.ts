@@ -58,7 +58,7 @@ export const formatedOtpEmail = (otp: string) => {
           <td style="width: 596px; vertical-align: top; padding-left: 0; padding-right: 0; padding-top: 15px; padding-bottom: 15px;" width="596">
 
             <!-- Your logo is here -->
-            <img style="width: 280px; max-width: 280px; height: 185px; max-height: 185px; text-align: center; color: #ffffff;" alt="Logo" src="https://nextjs-chat-e30r59zd9-ashra.vercel.app/rigor-raven.png" align="center" width="180" height="85">
+            <img style="width: 280px; max-width: 280px; height: 185px; max-height: 185px; text-align: center; color: #ffffff;" alt="Logo" src="https://nextjs-chat-tau-orpin.vercel.app/rigor-raven.png" align="center" width="180" height="85">
 
           </td>
         </tr>
