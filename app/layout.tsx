@@ -10,10 +10,10 @@ import { Providers } from '@/components/providers'
 import { Header } from '@/components/header'
 export const metadata: Metadata = {
   title: {
-    default: 'Arsh Academy AI Chatbot',
-    template: `%s - Arsh AI Chatbot`
+    default: 'Ashra Academy AI Chatbot',
+    template: `%s - Ashra AI Chatbot`
   },
-  description: 'An AI-powered chatbot for Arsh Academy',
+  description: 'An AI-powered chatbot for Ashra Academy',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },
     { media: '(prefers-color-scheme: dark)', color: 'black' }
