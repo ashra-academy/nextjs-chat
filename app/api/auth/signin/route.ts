@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       await transporter.sendMail({
         from: 'arash@ashra.academy', // sender address
         to: json?.email, // list of receivers
-        subject: 'Your login otp ✔', // Subject line
+        subject: 'Your login One Time Password ✔', // Subject line
         html: formatedOtpEmail(user.otp) // html body
       })
       return NextResponse.json(
@@ -58,11 +58,11 @@ export async function POST(req: Request) {
   transporter.sendMail({
     from: 'arash@ashra.academy', // sender address
     to: json.email, // list of receivers
-    subject: 'Your login otp ✔', // Subject line
+    subject: 'Your login One Time Password ✔', // Subject line
     html: formatedOtpEmail(otp) // html body
   })
   return NextResponse.json(
-    { message: 'Otp Email sent successfully' },
+    { message: 'Your one-time password sent successfully, please check your spam just in case!' },
     { status: 200 }
   )
 }
